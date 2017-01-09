@@ -11,7 +11,7 @@ class Card
   end
 
   def top_up(amount)
-    raise 'Top up amount must be an integer higher than 0' unless is_valid?(amount)
+    raise 'Top up amount must be higher than 0' unless is_valid?(amount)
     @balance += amount
   end
   alias :refund :top_up

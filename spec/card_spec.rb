@@ -1,6 +1,7 @@
 require 'spec_helper'
 require 'card'
 require 'fare'
+require 'byebug'
 
 describe Card do
 
@@ -21,15 +22,16 @@ describe Card do
 
     context "invalid top up amount" do
       it "fails if the top up amount is string" do
-        expect{card.top_up("hello")}.to raise_error("Top up amount must be an integer higher than 0")
+        expect{card.top_up("hello")}.to raise_error("Top up amount must be higher than 0")
       end
 
       it "fails if the top up amount is negative" do
-        expect{card.top_up(-30)}.to raise_error("Top up amount must be an integer higher than 0")
+        expect{card.top_up(-30)}.to raise_error("Top up amount must be higher than 0")
       end
 
       it "fails if top up is a float (normal oyster doesnt allow this)" do
-        expect{card.top_up(30.90).to raise_error("Top up amount must be an integer higher than 0")}
+        card.top_up(30.90)
+        expect(card.balance).to eq(60.90)
       end
     end
   end
