@@ -82,4 +82,26 @@ describe Card do
       expect(card.balance).to eq(23.80)
     end
   end
+
+  describe "when card balance is not at least the minimum fare" do
+    context "tube" do
+      before { card.top_up(1.90) }
+
+      it "should refuse entry" do
+        expect{card.charge({transport: :tube, options: {start: "Holborn"}})}.to raise_error("Entry refused, please top up")
+      end
+
+      it "should not let the user touch out if he didnt touch in" do
+        expect{card.charge({transport: :tube, options: {end: "Holborn"}})}.to raise_error("Entry refused, please top up")
+      end
+    end
+
+    context "bus" do
+      before { card.top_up(1.50) }
+
+      it "should refuse entry" do
+        expect{card.charge({transport: :bus})}.to raise_error("Entry refused, please top up")
+      end
+    end
+  end
 end

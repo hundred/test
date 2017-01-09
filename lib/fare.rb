@@ -1,3 +1,5 @@
+require 'byebug'
+
 class Fare
   MAX_AMOUNT_TUBE_FARE = 3.20
   BUS_AMOUNT = 1.80
@@ -15,10 +17,12 @@ class Fare
   end
 
   def bus
+    raise "Entry refused, please top up" if @card.balance < BUS_AMOUNT
     BUS_AMOUNT
   end
 
   def tube
+    raise "Entry refused, please top up" if @card.balance < MAX_AMOUNT_TUBE_FARE
     if @card.in_transit == true && @journey.fetch(:end, nil)
       @card.in_transit = false
       @card.refund(MAX_AMOUNT_TUBE_FARE)
