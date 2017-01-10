@@ -1,7 +1,5 @@
 require 'spec_helper'
 require 'card'
-require 'fare'
-require 'byebug'
 
 describe Card do
 
@@ -40,7 +38,7 @@ describe Card do
     before { card.top_up(30) }
 
     context "travelling by bus" do
-      before { card.charge({transport: :bus}) }
+      before { card.touch_in({transport: :bus}) }
 
       it "should successfully charge the card" do
         expect(card.balance).to eq(28.20)
@@ -48,38 +46,40 @@ describe Card do
     end
 
     context "travelling by tube" do
-      before { card.charge({transport: :tube, options: {start: "Holborn"}}) }
+      before { card.touch_in({transport: :tube, stop: "Holborn"}) }
 
       it "should successfully temp charge the card" do
         expect(card.balance).to eq(26.80)
-        card.charge({transport: :tube, options: {end: "Earls court"}})
-        expect(card.balance).to eq(27)
+        card.touch_out({transport: :tube, stop: "Earls court"})
+        expect(card.balance).to eq(27.50)
       end
 
       it "should charge max amount if user didnt touch out in the end of the journey" do
         expect(card.balance).to eq(26.80)
-        card.charge({transport: :tube, options: {start: "Earls court"}})
+        card.touch_in({transport: :tube, stop: "Earls court"})
         expect(card.balance).to eq(23.60)
-        card.charge({transport: :tube, options: {end: "Holborn"}})
-        expect(card.balance).to eq(23.80)
+        card.touch_out({transport: :tube, stop: "Holborn"})
+        expect(card.balance).to eq(24.30)
       end
 
       it "should charge max amount if user didnt touch out and then took the bus" do
         expect(card.balance).to eq(26.80)
-        card.charge({transport: :bus})
+        card.touch_in({transport: :bus})
         expect(card.balance).to eq(25)
-        card.charge({transport: :tube, options: {start: "Holborn"}})
-        card.charge({transport: :tube, options: {end: "Earls court"}})
-        expect(card.balance).to eq(22)
+        card.touch_in({transport: :tube, stop: "Holborn"})
+        expect(card.balance).to eq(21.80)
+        card.touch_out({transport: :tube, stop: "Earls court"})
+        expect(card.balance).to eq(22.50)
       end
     end
 
     it "should charge max amount if user didnt touch in and only touched out" do
-      card.charge({transport: :tube, options: {end: "Holborn"}})
+      card.touch_out({transport: :tube, stop: "Holborn"})
       expect(card.balance).to eq(26.80)
-      card.charge({transport: :tube, options: {start: "Holborn"}})
-      card.charge({transport: :tube, options: {end: "Earls court"}})
-      expect(card.balance).to eq(23.80)
+      card.touch_in({transport: :tube, stop: "Holborn"})
+      expect(card.balance).to eq(23.60)
+      card.touch_out({transport: :tube, stop: "Earls court"})
+      expect(card.balance).to eq(24.30)
     end
   end
 
@@ -88,11 +88,11 @@ describe Card do
       before { card.top_up(1.90) }
 
       it "should refuse entry" do
-        expect{card.charge({transport: :tube, options: {start: "Holborn"}})}.to raise_error("Entry refused, please top up")
+        expect{card.touch_in({transport: :tube, stop: "Holborn"})}.to raise_error("Please top up")
       end
 
       it "should not let the user touch out if he didnt touch in" do
-        expect{card.charge({transport: :tube, options: {end: "Holborn"}})}.to raise_error("Entry refused, please top up")
+        expect{card.touch_out({transport: :tube, stop: "Holborn"})}.to raise_error("Please top up")
       end
     end
 
@@ -100,7 +100,7 @@ describe Card do
       before { card.top_up(1.50) }
 
       it "should refuse entry" do
-        expect{card.charge({transport: :bus})}.to raise_error("Entry refused, please top up")
+        expect{card.touch_in({transport: :bus})}.to raise_error("Please top up")
       end
     end
   end
