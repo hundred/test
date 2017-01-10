@@ -27,7 +27,7 @@ class Journey
   private
 
   def format_words(word)
-    word.downcase.gsub("'", "") if word
+    word.downcase.gsub(/-|’|'/, "") if word
   end
 
   def fare

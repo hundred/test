@@ -1,5 +1,3 @@
-require 'byebug'
-
 class Fare
   BASIC_TUBE_FARE = 3.20
   BUS_FARE = 1.80
