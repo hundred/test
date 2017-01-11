@@ -36,10 +36,19 @@ class ZoneFinder
   end
 
   def multiple_zones
-    if origin.last < destination.first
-      (origin.last..destination.first).collect {|i| i}
-    elsif origin.last > destination.last
-      (destination.last..origin.last).collect {|i| i}
+    if travelling_outbound?
+      list_zones_upto(destination.min)
+    else
+      list_zones_upto(destination.max)
     end
+  end
+
+  def travelling_outbound?
+    origin.last < destination.first
+  end
+
+  def list_zones_upto(dest_zone)
+    zones_array = [origin.max, dest_zone]
+    (zones_array.min..zones_array.max).collect {|i| i}
   end
 end

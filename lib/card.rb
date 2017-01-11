@@ -4,6 +4,7 @@ class Card
 
   def initialize
     @balance = 0
+    @journey = nil
   end
 
   def top_up(amount)
