@@ -1,5 +1,6 @@
 require 'spec_helper'
 require 'fare'
+require 'zone_finder'
 
 describe Fare do
 

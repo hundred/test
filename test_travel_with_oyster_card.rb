@@ -1,6 +1,7 @@
 require_relative 'lib/card'
 require_relative 'lib/fare'
 require_relative 'lib/journey'
+require_relative 'lib/zone_finder'
 
 # top up with £30
 card = Card.new
